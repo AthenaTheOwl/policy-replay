@@ -1,0 +1,14 @@
+[project]
+name = "policy-replay"
+version = "0.1.0"
+description = "Fixture-backed replay for power-market rule changes."
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".", "src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+

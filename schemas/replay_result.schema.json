@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://athena.dev/policy-replay/replay-result.schema.json",
+  "title": "PolicyReplay replay result",
+  "type": "object",
+  "required": ["replay_id", "rule_id", "history_snapshot_ref", "trial_count", "seed", "baseline_outcomes", "counterfactual_outcomes", "outcome_delta_summary"],
+  "additionalProperties": false,
+  "properties": {
+    "replay_id": {"type": "string"},
+    "rule_id": {"type": "string"},
+    "history_snapshot_ref": {"type": "string"},
+    "trial_count": {"type": "integer", "minimum": 1},
+    "seed": {"type": "integer", "minimum": 0},
+    "baseline_outcomes": {"type": "object"},
+    "counterfactual_outcomes": {"type": "object"},
+    "outcome_delta_summary": {"type": "object"}
+  }
+}
+

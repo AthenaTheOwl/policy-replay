@@ -1,0 +1,16 @@
+{
+  "rule_id": "pjm-dec2025-capacity-reform",
+  "name": "PJM December 2025 capacity-market reserve margin change",
+  "proposing_body": "ISO",
+  "proposal_date": "2025-12-15",
+  "effective_target_date": "2026-06-01",
+  "affected_markets": ["pjm.rpm"],
+  "parameter_overrides": {
+    "reserve_margin_delta_pct": 1.5
+  },
+  "references": [
+    "https://www.pjm.com/committees-and-groups/committees/mic",
+    "https://www.ferc.gov/industries-data/electric/electric-power-markets/pjm"
+  ]
+}
+

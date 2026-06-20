@@ -1,0 +1,20 @@
+{
+  "baseline_outcomes": {
+    "mean_cleared_mw": 148683.333,
+    "mean_price_usd_mw_day": 83.842
+  },
+  "counterfactual_outcomes": {
+    "mean_cleared_mw": 146007.033,
+    "mean_price_usd_mw_day": 88.243
+  },
+  "history_snapshot_ref": "data/history/pjm_rpm_2018_2023.csv",
+  "outcome_delta_summary": {
+    "mean_cleared_mw_delta": -2676.3,
+    "mean_price_delta_usd_mw_day": 4.401,
+    "reserve_margin_delta_pct": 1.5
+  },
+  "replay_id": "pr-8fce0cd16b4f",
+  "rule_id": "pjm-dec2025-capacity-reform",
+  "seed": 20260620,
+  "trial_count": 1
+}
