@@ -29,11 +29,8 @@ energy lawyers.
 
 ## Status
 
-v0 scaffold. No implementation. The repo holds the README, the
-license, the agents contract, the foundation spec, and the literal
-first PR plan. The first runnable PR after this scaffold lands the
-rule-spec schema and the historical-record loader against a small
-PJM 2018-2023 fixture.
+
+v0.1 shipped — runnable, minimal. The first real deliverable is in place; the next passes deepen it (more scenarios, real-data backfill). The entry command `python -m policy_replay simulate` runs. See `specs/0002-design/` for the v0.1 scope and `STATUS.md` (where present) for the current state and next-feature queue.
 
 ## How to run
 
