@@ -58,3 +58,20 @@ def test_replay_has_nonzero_delta() -> None:
     data = json.loads((ROOT / "reports" / "pjm-dec2025-replay" / "replay_result.json").read_text())
     assert data["outcome_delta_summary"]["mean_price_delta_usd_mw_day"] > 0
 
+
+def test_show_verb_prints_readable_ranked_result() -> None:
+    result = subprocess.run(
+        [sys.executable, "-m", "policy_replay", "show"],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=True,
+    )
+    out = result.stdout
+    # headline finding + ranked table + the rule id are all present
+    assert "headline:" in out
+    assert "baseline" in out and "counterfactual" in out
+    assert "pjm-dec2025-capacity-reform" in out
+    # the bigger relative shift (price, +5.2%) is ranked above the smaller (cleared MW)
+    assert out.index("clearing price") < out.index("cleared capacity")
+

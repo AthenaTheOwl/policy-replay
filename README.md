@@ -34,16 +34,50 @@ v0.1 shipped — runnable, minimal. The first real deliverable is in place; the 
 
 ## How to run
 
-Placeholder. After implementation lands:
+Run the worked example (writes `reports/pjm-dec2025-replay/`):
 
 ```bash
-uv run policy-replay simulate \
-  --rule rules/pjm-dec2025-capacity-reform.yaml \
-  --history data/pjm_rpm_2018_2023.parquet \
-  --queue data/pjm_queue_2018_2023.parquet \
-  --trials 1000 \
-  --out reports/pjm-dec2025-replay/
+python -m policy_replay simulate \
+  --rule rules/pjm-dec2025-capacity-reform.json \
+  --history data/history/pjm_rpm_2018_2023.csv \
+  --out reports/pjm-dec2025-replay
 ```
+
+Then read the committed result as a ranked, readable screen (no args, offline):
+
+```bash
+python -m policy_replay show
+```
+
+```
+policy-replay - counterfactual outcome screen (pjm-dec2025-capacity-reform)
+metric                               baseline   counterfactual        delta     shift
+-------------------------------------------------------------------------------------
+clearing price (USD/MW-day)             83.84            88.24        +4.40     +5.2%
+cleared capacity (MW)              148,683.33       146,007.03    -2,676.30     -1.8%
+reserve margin (pts)                                                  +1.50
+
+headline: under the +1.5-pt reserve-margin change, clearing price moves up 5.2% ...
+```
+
+## live demo
+
+A Streamlit page (`streamlit_app.py`) renders the same counterfactual screen
+interactively — three metrics, a ranked baseline-vs-counterfactual table, and the
+headline finding. It reads the committed `reports/*/replay_result.json` directly;
+no network, no secrets.
+
+Run locally:
+
+```bash
+pip install -r requirements.txt
+streamlit run streamlit_app.py
+```
+
+Deploy on Streamlit Community Cloud: New app -> repo `AthenaTheOwl/policy-replay`,
+branch `main`, main file `streamlit_app.py`.
+
+<!-- live url: (paste Streamlit Community Cloud URL here once deployed) -->
 
 ## Layout
 
