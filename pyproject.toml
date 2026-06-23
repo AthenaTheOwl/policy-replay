@@ -3,6 +3,14 @@ name = "policy-replay"
 version = "0.1.0"
 description = "Fixture-backed replay for power-market rule changes."
 requires-python = ">=3.11"
+dependencies = []
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/policy_replay"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

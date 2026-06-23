@@ -103,8 +103,139 @@ st.info(
     f"this is a deterministic counterfactual screen on a committed fixture, not a probabilistic forecast."
 )
 
+# ---------------------------------------------------------------------------
+# Run the real replay engine live. This is not a viewer — the controls below
+# call policy_replay.sim.replay (via translate), the same function that produced
+# the committed result. Set the rule's reserve-margin override, edit the auction
+# history, and watch the counterfactual recompute.
+# ---------------------------------------------------------------------------
+st.divider()
+st.subheader("replay your own rule")
+st.caption(
+    "drive the actual replay engine — `policy_replay.sim.replay` — with your own rule override "
+    "and auction history. pre-filled with the committed PJM RPM fixture."
+)
+
+try:
+    import csv
+    import io
+    import sys
+
+    sys.path.insert(0, str(REPO / "src"))
+    from policy_replay.models import AuctionRow, RuleSpec
+    from policy_replay.sim import replay
+    from policy_replay.translator import BASELINE
+
+    col_a, col_b = st.columns(2)
+    with col_a:
+        margin = st.slider(
+            "reserve-margin override (pts)",
+            -5.0, 5.0,
+            float(result["outcome_delta_summary"]["reserve_margin_delta_pct"]),
+            step=0.1,
+            help="the rule parameter applied to the historical auction record",
+        )
+        seed = st.number_input("seed", min_value=0, value=int(result["seed"]), step=1)
+    with col_b:
+        price_elast = st.slider(
+            "price elasticity per margin point",
+            -0.10, 0.10, float(BASELINE["price_elasticity_per_margin_point"]), step=0.005,
+            help="how clearing price responds to a 1-pt reserve-margin change",
+        )
+        mw_elast = st.slider(
+            "cleared-MW elasticity per margin point",
+            -0.10, 0.10, float(BASELINE["cleared_mw_elasticity_per_margin_point"]), step=0.005,
+            help="how cleared capacity responds to a 1-pt reserve-margin change",
+        )
+
+    default_csv = (
+        "auction_year,lda,clearing_price_usd_mw_day,cleared_mw,reserve_margin_pct\n"
+        "2018,RTO,140.00,154000,16.2\n"
+        "2019,RTO,110.00,151500,15.8\n"
+        "2020,RTO,50.00,148200,14.9\n"
+        "2021,RTO,140.00,150300,15.6\n"
+        "2022,RTO,34.13,144900,14.3\n"
+        "2023,RTO,28.92,143200,13.9\n"
+    )
+    history_text = st.text_area(
+        "auction history (CSV) — edit prices, capacities, add rows",
+        value=default_csv,
+        height=180,
+    )
+
+    history = []
+    for row in csv.DictReader(io.StringIO(history_text)):
+        history.append(
+            AuctionRow(
+                auction_year=int(row["auction_year"]),
+                lda=row["lda"],
+                clearing_price_usd_mw_day=float(row["clearing_price_usd_mw_day"]),
+                cleared_mw=float(row["cleared_mw"]),
+                reserve_margin_pct=float(row["reserve_margin_pct"]),
+            )
+        )
+    if not history:
+        raise ValueError("history has no rows")
+
+    rule = RuleSpec(
+        rule_id="user-rule",
+        name="your rule",
+        proposing_body="you",
+        proposal_date="2026-06",
+        effective_target_date="2026-06",
+        affected_markets=["pjm.rpm"],
+        parameter_overrides={
+            "reserve_margin_delta_pct": margin,
+            "price_elasticity_per_margin_point": price_elast,
+            "cleared_mw_elasticity_per_margin_point": mw_elast,
+        },
+        references=["https://example/a", "https://example/b"],
+    )
+
+    live = replay(rule, history, "user-input", int(seed))
+    lbase = live.baseline_outcomes
+    lcounter = live.counterfactual_outcomes
+    ldelta = live.outcome_delta_summary
+
+    m1, m2, m3 = st.columns(3)
+    m1.metric(
+        "clearing price",
+        f"${lcounter['mean_price_usd_mw_day']:,.2f}",
+        f"{ldelta['mean_price_delta_usd_mw_day']:+,.2f} USD/MW-day",
+    )
+    m2.metric(
+        "cleared capacity",
+        f"{lcounter['mean_cleared_mw']:,.0f} MW",
+        f"{ldelta['mean_cleared_mw_delta']:+,.0f} MW",
+    )
+    m3.metric("replay id", live.replay_id)
+
+    live_rows = [
+        {
+            "metric": "clearing price (USD/MW-day)",
+            "baseline": lbase["mean_price_usd_mw_day"],
+            "counterfactual": lcounter["mean_price_usd_mw_day"],
+            "delta": ldelta["mean_price_delta_usd_mw_day"],
+        },
+        {
+            "metric": "cleared capacity (MW)",
+            "baseline": lbase["mean_cleared_mw"],
+            "counterfactual": lcounter["mean_cleared_mw"],
+            "delta": ldelta["mean_cleared_mw_delta"],
+        },
+    ]
+    st.dataframe(live_rows, use_container_width=True, hide_index=True)
+    st.caption(
+        "move the override, retune the elasticities, or edit the CSV and the counterfactual "
+        "recomputes — it's the live `replay()` engine, not a lookup. the replay id is the real "
+        "deterministic hash over your rule + history + seed."
+    )
+except Exception as exc:  # pragma: no cover - defensive for cloud import differences
+    st.info(f"interactive replay needs the package importable ({exc}). the committed result above still renders.")
+
 st.caption(
     "v0.1 ships one PJM RPM fixture and one rule. the model + replay live in "
-    "`src/policy_replay/`; this page reads the committed `reports/*/replay_result.json`. "
+    "`src/policy_replay/`; this page reads the committed `reports/*/replay_result.json` "
+    "and the replay section above is the real engine. "
     "repo: github.com/AthenaTheOwl/policy-replay"
 )
