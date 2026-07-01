@@ -97,7 +97,17 @@ def main(argv: list[str] | None = None) -> int:
     show.add_argument("--result", default=None, help="path to a replay_result.json (default: latest under reports/)")
     args = parser.parse_args(argv)
     if args.command == "simulate":
-        paths = simulate(ROOT / args.rule, ROOT / args.history, ROOT / args.out, args.seed)
+        try:
+            paths = simulate(ROOT / args.rule, ROOT / args.history, ROOT / args.out, args.seed)
+        except (OSError, json.JSONDecodeError, KeyError, ValueError) as exc:
+            # a bad --rule/--history path or malformed content should exit clean, not dump a traceback.
+            # KeyError surfaces as a missing CSV column / rule field; name what we were reading.
+            raise SystemExit(
+                f"simulate failed reading rule {args.rule!r} / history {args.history!r}: {exc}. "
+                "history must be a CSV with columns "
+                "auction_year, lda, clearing_price_usd_mw_day, cleared_mw, reserve_margin_pct; "
+                "rule must be JSON with at least two references."
+            ) from exc
         print(json.dumps({key: value.relative_to(ROOT).as_posix() for key, value in paths.items()}, sort_keys=True))
         return 0
     if args.command == "show":
