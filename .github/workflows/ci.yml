@@ -25,6 +25,12 @@ jobs:
       - name: pytest
         run: python -m uv run --with pytest pytest -q
 
+      - name: validate-schemas
+        run: python -m uv run python scripts/validate_schemas.py
+
+      - name: sanity-bounds
+        run: python -m uv run python eval/sanity_bounds.py
+
       - name: compile python surfaces
         run: |
           python - <<'PY'

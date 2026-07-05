@@ -5,6 +5,11 @@ description = "Fixture-backed replay for power-market rule changes."
 requires-python = ">=3.11"
 dependencies = []
 
+[dependency-groups]
+dev = [
+    "jsonschema>=4.0",
+]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
