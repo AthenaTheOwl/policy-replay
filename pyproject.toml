@@ -3,7 +3,10 @@ name = "policy-replay"
 version = "0.1.0"
 description = "Fixture-backed replay for power-market rule changes."
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "pyyaml>=6.0",
+    "jsonschema>=4.0",
+]
 
 [dependency-groups]
 dev = [
