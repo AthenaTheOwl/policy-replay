@@ -10,11 +10,6 @@ policy-replay puts them there. It takes a rule encoded as a small JSON file, rep
 
 ## Try it
 
-Use the [assumption-change review](docs/assumption-change-review.md) when a filing,
-rule translation or historical snapshot changes. It separates parameter and data
-effects, preserves earlier results, and defines falsification evidence before a
-counterfactual comparison is accepted.
-
 Run the worked example. It writes the replay artifact to `reports/pjm-dec2025-replay/`:
 
 ```bash
@@ -45,6 +40,11 @@ headline: under the +1.5-pt reserve-margin change, clearing price moves up 5.2% 
 ```
 
 Ranked by relative shift, the largest mover first. The reserve-margin row is the knob you turned; the price and capacity rows are what moved when you turned it.
+
+Use the [assumption-change review](docs/assumption-change-review.md) when a filing,
+rule translation or historical snapshot changes. It separates parameter and data
+effects, preserves earlier results, and defines falsification evidence before a
+counterfactual comparison is accepted.
 
 ## Live demo
 
