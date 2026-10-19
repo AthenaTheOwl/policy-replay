@@ -24,8 +24,7 @@ the model should reproduce within a declared tolerance. Keep calibration failure
 in the review record. Do not turn a matching aggregate into a claim that all
 auction or participant behavior has been validated.
 
-This applies [AI Product Team's change-impact procedure](https://github.com/3orionkings/ai-product-team/blob/main/workflows/process-change.md)
-to the existing rule/history/report boundary. It is an operating protocol; the
+This is an operating protocol for the existing rule/history/report boundary; the
 current runner does not traverse dependencies or enforce semantic review for you.
 The output remains a descriptive counterfactual screen. This note adds no current
 market forecasts, valuation claims, policy recommendations or live filing data.
