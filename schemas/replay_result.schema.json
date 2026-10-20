@@ -3,7 +3,7 @@
   "$id": "https://athena.dev/policy-replay/replay-result.schema.json",
   "title": "PolicyReplay replay result",
   "type": "object",
-  "required": ["replay_id", "rule_id", "history_snapshot_ref", "trial_count", "seed", "baseline_outcomes", "counterfactual_outcomes", "outcome_delta_summary"],
+  "required": ["replay_id", "rule_id", "history_snapshot_ref", "trial_count", "seed", "baseline_outcomes", "counterfactual_outcomes", "outcome_delta_summary", "model", "per_auction"],
   "additionalProperties": false,
   "properties": {
     "replay_id": {"type": "string"},
@@ -13,7 +13,41 @@
     "seed": {"type": "integer", "minimum": 0},
     "baseline_outcomes": {"type": "object"},
     "counterfactual_outcomes": {"type": "object"},
-    "outcome_delta_summary": {"type": "object"}
+    "outcome_delta_summary": {"type": "object"},
+    "model": {
+      "type": "object",
+      "required": ["kind", "price_elasticity_per_margin_point", "cleared_mw_elasticity_per_margin_point", "elasticity_source", "price_shift_pct", "cleared_mw_shift_pct", "history_rows"],
+      "properties": {
+        "kind": {"const": "fixed_elasticity"},
+        "price_elasticity_per_margin_point": {"type": "number"},
+        "cleared_mw_elasticity_per_margin_point": {"type": "number"},
+        "elasticity_source": {"type": "string"},
+        "price_shift_pct": {"type": "number"},
+        "cleared_mw_shift_pct": {"type": "number"},
+        "history_rows": {"type": "integer", "minimum": 1},
+        "history_sets": {"type": "string"}
+      }
+    },
+    "per_auction": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["auction_year", "lda", "reserve_margin_pct", "baseline_price_usd_mw_day", "counterfactual_price_usd_mw_day", "price_delta_usd_mw_day", "baseline_cleared_mw", "counterfactual_cleared_mw", "cleared_mw_delta"],
+        "additionalProperties": false,
+        "properties": {
+          "auction_year": {"type": "integer"},
+          "lda": {"type": "string"},
+          "reserve_margin_pct": {"type": "number"},
+          "baseline_price_usd_mw_day": {"type": "number"},
+          "counterfactual_price_usd_mw_day": {"type": "number"},
+          "price_delta_usd_mw_day": {"type": "number"},
+          "baseline_cleared_mw": {"type": "number"},
+          "counterfactual_cleared_mw": {"type": "number"},
+          "cleared_mw_delta": {"type": "number"}
+        }
+      }
+    }
   }
 }
 

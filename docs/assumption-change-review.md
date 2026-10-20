@@ -12,11 +12,17 @@ Classify the change as a corrected reading, a different proposed rule, or new
 historical data. The memo should distinguish sourced values from modeling
 assumptions.
 
-Run the same seed and historical snapshot for a parameter change. If the history
-also changed, first replay the old rule against the new history so the data effect
-can be inspected separately. Retain both results and their digests. A deterministic
-reproduction establishes repeatability under those inputs; it does not establish
-that the counterfactual matches what an actual market would have done.
+Keep the historical snapshot fixed for a parameter change (the seed only labels
+the run in v0.1; outcomes are deterministic). If the history also changed, first
+replay the old rule against the new history so the data effect can be inspected
+separately. Write each run to a new `--out` directory, because `simulate`
+overwrites its output, and record content digests (for example `sha256sum`) of
+the rule JSON, the history CSV and each `replay_result.json`. The `replay_id` is
+not a content digest: it hashes the rule id, history path, seed and reserve-margin
+delta, so an edited snapshot at the same path or a changed elasticity override
+keeps the same `replay_id`. A deterministic reproduction establishes
+repeatability under those inputs; it does not establish that the counterfactual
+matches what an actual market would have done.
 
 For every important interpretation, state a falsification check: a published
 worked example, a known limiting case, or a past change whose observed outcome
@@ -24,8 +30,7 @@ the model should reproduce within a declared tolerance. Keep calibration failure
 in the review record. Do not turn a matching aggregate into a claim that all
 auction or participant behavior has been validated.
 
-This applies [AI Product Team's change-impact procedure](https://github.com/3orionkings/ai-product-team/blob/main/workflows/process-change.md)
-to the existing rule/history/report boundary. It is an operating protocol; the
+This is an operating protocol for the existing rule/history/report boundary; the
 current runner does not traverse dependencies or enforce semantic review for you.
 The output remains a descriptive counterfactual screen. This note adds no current
 market forecasts, valuation claims, policy recommendations or live filing data.

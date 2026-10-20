@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from typing import Any
 
 
@@ -35,6 +35,8 @@ class ReplayResult:
     baseline_outcomes: dict[str, Any]
     counterfactual_outcomes: dict[str, Any]
     outcome_delta_summary: dict[str, Any]
+    model: dict[str, Any] = field(default_factory=dict)
+    per_auction: list[dict[str, Any]] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)

@@ -8,11 +8,89 @@
     "mean_price_usd_mw_day": 88.243
   },
   "history_snapshot_ref": "data/history/pjm_rpm_2018_2023.csv",
+  "model": {
+    "cleared_mw_elasticity_per_margin_point": -0.012,
+    "cleared_mw_shift_pct": -1.8,
+    "elasticity_source": "translator BASELINE default; assumed, not sourced to a filing",
+    "history_rows": 6,
+    "history_sets": "each auction's baseline level; the relative shift is the same on any history",
+    "kind": "fixed_elasticity",
+    "price_elasticity_per_margin_point": 0.035,
+    "price_shift_pct": 5.25
+  },
   "outcome_delta_summary": {
     "mean_cleared_mw_delta": -2676.3,
     "mean_price_delta_usd_mw_day": 4.401,
     "reserve_margin_delta_pct": 1.5
   },
+  "per_auction": [
+    {
+      "auction_year": 2018,
+      "baseline_cleared_mw": 154000.0,
+      "baseline_price_usd_mw_day": 140.0,
+      "cleared_mw_delta": -2772.0,
+      "counterfactual_cleared_mw": 151228.0,
+      "counterfactual_price_usd_mw_day": 147.35,
+      "lda": "RTO",
+      "price_delta_usd_mw_day": 7.35,
+      "reserve_margin_pct": 16.2
+    },
+    {
+      "auction_year": 2019,
+      "baseline_cleared_mw": 151500.0,
+      "baseline_price_usd_mw_day": 110.0,
+      "cleared_mw_delta": -2727.0,
+      "counterfactual_cleared_mw": 148773.0,
+      "counterfactual_price_usd_mw_day": 115.775,
+      "lda": "RTO",
+      "price_delta_usd_mw_day": 5.775,
+      "reserve_margin_pct": 15.8
+    },
+    {
+      "auction_year": 2020,
+      "baseline_cleared_mw": 148200.0,
+      "baseline_price_usd_mw_day": 50.0,
+      "cleared_mw_delta": -2667.6,
+      "counterfactual_cleared_mw": 145532.4,
+      "counterfactual_price_usd_mw_day": 52.625,
+      "lda": "RTO",
+      "price_delta_usd_mw_day": 2.625,
+      "reserve_margin_pct": 14.9
+    },
+    {
+      "auction_year": 2021,
+      "baseline_cleared_mw": 150300.0,
+      "baseline_price_usd_mw_day": 140.0,
+      "cleared_mw_delta": -2705.4,
+      "counterfactual_cleared_mw": 147594.6,
+      "counterfactual_price_usd_mw_day": 147.35,
+      "lda": "RTO",
+      "price_delta_usd_mw_day": 7.35,
+      "reserve_margin_pct": 15.6
+    },
+    {
+      "auction_year": 2022,
+      "baseline_cleared_mw": 144900.0,
+      "baseline_price_usd_mw_day": 34.13,
+      "cleared_mw_delta": -2608.2,
+      "counterfactual_cleared_mw": 142291.8,
+      "counterfactual_price_usd_mw_day": 35.922,
+      "lda": "RTO",
+      "price_delta_usd_mw_day": 1.792,
+      "reserve_margin_pct": 14.3
+    },
+    {
+      "auction_year": 2023,
+      "baseline_cleared_mw": 143200.0,
+      "baseline_price_usd_mw_day": 28.92,
+      "cleared_mw_delta": -2577.6,
+      "counterfactual_cleared_mw": 140622.4,
+      "counterfactual_price_usd_mw_day": 30.438,
+      "lda": "RTO",
+      "price_delta_usd_mw_day": 1.518,
+      "reserve_margin_pct": 13.9
+    }
+  ],
   "replay_id": "pr-8fce0cd16b4f",
   "rule_id": "pjm-dec2025-capacity-reform",
   "seed": 20260620,

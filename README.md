@@ -1,19 +1,16 @@
 # policy-replay
 
-PJM's proposed +1.5-point reserve-margin change isn't effective yet. Run it against six years of cleared RPM auctions and the screen says the clearing price moves up 5.2% — 83.84 to 88.24 dollars per MW-day — while cleared capacity falls 2,676 MW. The rule hasn't passed. The number already exists.
+PJM's proposed +1.5-point reserve-margin change isn't effective yet. Apply it to six cleared RPM auctions from 2018 to 2023 at an assumed price elasticity of 3.5% per margin point and the mean clearing price moves from 83.84 to 88.24 dollars per MW-day, +5.2%, while cleared capacity falls 2,676 MW. The +5.2% is 1.5 x 3.5%. It comes from the elasticity, not from the auctions, and it is the same on any history.
 
 ## What it does
 
-A power-market rule change arrives as a proposal: a FERC order, an ISO tariff filing, a state PUC draft on data-center cost allocation. Months pass before it takes effect, and longer before anyone can say what it did. The historical record that would answer the question — what this rule would have done to past auctions — sits in one place. The proposal sits in another. Nobody has put them in the same room.
+A power-market rule change arrives as a proposal: a FERC order, an ISO tariff filing, a state PUC draft on data-center cost allocation. Months pass before it takes effect, and longer before anyone can say what it did.
 
-policy-replay puts them there. It takes a rule encoded as a small JSON file, replays it against historical queue and auction data, and prints a counterfactual screen: each metric, baseline versus what the rule would have produced, ranked by how far it moves. v0.1 ships one worked example — PJM's December 2025 capacity-market reserve-margin proposal, replayed against PJM RPM auctions from 2018 to 2023. The screen is deterministic and seeded. It is a screen, not a forecast, and it says so on the last line.
+policy-replay takes a rule encoded as a small JSON file, translates it into numeric parameters, and applies them to each auction in a historical fixture. v0.1 ships one worked example: PJM's December 2025 capacity-market reserve-margin proposal against a six-row PJM RPM fixture covering 2018 to 2023. The fixture CSV does not cite a source for its rows.
+
+The v0.1 model is a fixed elasticity. Each auction's clearing price is scaled by `1 + margin_delta x price_elasticity` and its cleared MW by `1 + margin_delta x cleared_mw_elasticity`. The defaults, 0.035 and -0.012 per margin point, live in `src/policy_replay/translator.py`; they are assumptions, not values from a cited filing, and a rule file can override them. The history sets each auction's baseline level, so the per-auction rows and the dollar and MW deltas depend on it. The percentage shift does not, the response ignores the fixture's `reserve_margin_pct` column, and nothing is estimated from the auctions, cleared through a demand curve, or sampled. `replay_result.json` records this under `model`, including where the elasticities came from. The screen is deterministic. It is a screen, not a forecast, and it says so on the last line.
 
 ## Try it
-
-Use the [assumption-change review](docs/assumption-change-review.md) when a filing,
-rule translation or historical snapshot changes. It separates parameter and data
-effects, preserves earlier results, and defines falsification evidence before a
-counterfactual comparison is accepted.
 
 Run the worked example. It writes the replay artifact to `reports/pjm-dec2025-replay/`:
 
@@ -41,10 +38,27 @@ clearing price (USD/MW-day)             83.84            88.24        +4.40     
 cleared capacity (MW)              148,683.33       146,007.03    -2,676.30     -1.8%
 reserve margin (pts)                                                  +1.50          
 
-headline: under the +1.5-pt reserve-margin change, clearing price moves up 5.2% (83.84 -> 88.24). deterministic screen, not a forecast.
+per auction (6 rows from the history file):
+year   lda     margin %      price      -> cf   cleared MW        -> cf
+2018   RTO         16.2     140.00     147.35      154,000      151,228
+2019   RTO         15.8     110.00     115.78      151,500      148,773
+2020   RTO         14.9      50.00      52.62      148,200      145,532
+2021   RTO         15.6     140.00     147.35      150,300      147,595
+2022   RTO         14.3      34.13      35.92      144,900      142,292
+2023   RTO         13.9      28.92      30.44      143,200      140,622
+
+model: fixed elasticity. price +0.035 and cleared MW -0.012 per margin point (translator BASELINE default; assumed, not sourced to a filing).
+every auction shifts +5.25% in price and -1.80% in cleared MW on any history; the history sets the levels, not the shift. reserve margin is shown, not used.
+
+headline: under the +1.5-pt reserve-margin change, clearing price moves up 5.2% (83.84 -> 88.24). fixed-elasticity screen, not a forecast.
 ```
 
-Ranked by relative shift, the largest mover first. The reserve-margin row is the knob you turned; the price and capacity rows are what moved when you turned it.
+Ranked by relative shift, the largest mover first. The reserve-margin row is the knob you turned. The price and capacity rows are that knob times the assumed elasticities, applied to each auction in the per-auction table.
+
+Use the [assumption-change review](docs/assumption-change-review.md) when a filing,
+rule translation or historical snapshot changes. It separates parameter and data
+effects, asks you to preserve earlier results (use a new `--out` directory), and
+defines falsification evidence before a counterfactual comparison is accepted.
 
 ## Live demo
 
@@ -86,6 +100,7 @@ policy-replay/
       acceptance.md
   docs/
     first-pr.md
+    assumption-change-review.md
 ```
 
 Downstream additions:
