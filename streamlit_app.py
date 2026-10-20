@@ -3,8 +3,8 @@
 Reads the committed replay result under reports/*/replay_result.json and shows
 the counterfactual outcome screen for a proposed power-market rule change:
 baseline PJM RPM auction outcomes versus the counterfactual under the rule's
-reserve-margin override. No network, no secrets — runs entirely off the
-committed fixture.
+reserve-margin override, applied through fixed, assumed elasticities. No
+network, no secrets — runs entirely off the committed fixture.
 
 Deploy: Streamlit Community Cloud -> New app -> repo AthenaTheOwl/policy-replay,
 branch main, main file streamlit_app.py.
@@ -31,8 +31,10 @@ def load_result() -> tuple[dict | None, str]:
 st.set_page_config(page_title="policy-replay — counterfactual outcome screen", layout="wide")
 st.title("policy-replay")
 st.caption(
-    "replay a proposed power-market rule change against historical PJM RPM auction "
-    "outcomes — baseline versus counterfactual, before the rule goes effective."
+    "apply a proposed power-market rule change to historical PJM RPM auction outcomes "
+    "through fixed, assumed elasticities — baseline versus counterfactual. the "
+    "percentage shift is reserve-margin delta x elasticity on any history; the "
+    "history sets the levels."
 )
 
 result, report_name = load_result()
@@ -100,7 +102,8 @@ st.info(
     f"**headline:** under the {margin:+.1f}-pt reserve-margin change, "
     f"{top['metric'].split(' (')[0]} moves {direction} {abs(top['shift %']):.1f}% "
     f"({top['baseline']:,.2f} -> {top['counterfactual']:,.2f}). "
-    f"this is a deterministic counterfactual screen on a committed fixture, not a probabilistic forecast."
+    f"the shift is the assumed elasticity times the margin change, the same on any history. "
+    f"this is a fixed-elasticity screen on a committed fixture, not a forecast."
 )
 
 # ---------------------------------------------------------------------------

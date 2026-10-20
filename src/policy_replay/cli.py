@@ -72,6 +72,32 @@ def render_show(result: dict, rule_id: str) -> list[str]:
 
     out.append(f"{'reserve margin (pts)':<30} {'':>14} {'':>16} {delta['reserve_margin_delta_pct']:>+12,.2f} {'':>9}")
 
+    model = result.get("model")
+    per_auction = result.get("per_auction") or []
+    if per_auction:
+        out.append("")
+        out.append(f"per auction ({len(per_auction)} rows from the history file):")
+        sub = f"{'year':<6} {'lda':<6} {'margin %':>9} {'price':>10} {'-> cf':>10} {'cleared MW':>12} {'-> cf':>12}"
+        out.append(sub)
+        for row in per_auction:
+            out.append(
+                f"{row['auction_year']:<6} {row['lda']:<6} {row['reserve_margin_pct']:>9.1f} "
+                f"{row['baseline_price_usd_mw_day']:>10,.2f} {row['counterfactual_price_usd_mw_day']:>10,.2f} "
+                f"{row['baseline_cleared_mw']:>12,.0f} {row['counterfactual_cleared_mw']:>12,.0f}"
+            )
+    if model:
+        out.append("")
+        out.append(
+            f"model: fixed elasticity. price {model['price_elasticity_per_margin_point']:+.3f} and "
+            f"cleared MW {model['cleared_mw_elasticity_per_margin_point']:+.3f} per margin point "
+            f"({model['elasticity_source']})."
+        )
+        out.append(
+            f"every auction shifts {model['price_shift_pct']:+.2f}% in price and "
+            f"{model['cleared_mw_shift_pct']:+.2f}% in cleared MW on any history; the history sets "
+            "the levels, not the shift. reserve margin is shown, not used."
+        )
+
     top = rows[0]
     direction = "up" if top[3] > 0 else "down"
     pct = (top[3] / top[1] * 100) if top[1] else 0.0
@@ -79,7 +105,12 @@ def render_show(result: dict, rule_id: str) -> list[str]:
     out.append(
         f"headline: under the +{delta['reserve_margin_delta_pct']:.1f}-pt reserve-margin change, "
         f"{top[0].split(' (')[0]} moves {direction} {abs(pct):.1f}% "
-        f"({top[1]:,.2f} -> {top[2]:,.2f}). deterministic screen, not a forecast."
+        f"({top[1]:,.2f} -> {top[2]:,.2f}). "
+        + (
+            "fixed-elasticity screen, not a forecast."
+            if model
+            else "deterministic screen, not a forecast."
+        )
     )
     return out
 
