@@ -43,8 +43,8 @@ Ranked by relative shift, the largest mover first. The reserve-margin row is the
 
 Use the [assumption-change review](docs/assumption-change-review.md) when a filing,
 rule translation or historical snapshot changes. It separates parameter and data
-effects, preserves earlier results, and defines falsification evidence before a
-counterfactual comparison is accepted.
+effects, asks you to preserve earlier results (use a new `--out` directory), and
+defines falsification evidence before a counterfactual comparison is accepted.
 
 ## Live demo
 
@@ -86,6 +86,7 @@ policy-replay/
       acceptance.md
   docs/
     first-pr.md
+    assumption-change-review.md
 ```
 
 Downstream additions:
